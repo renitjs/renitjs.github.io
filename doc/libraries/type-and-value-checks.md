@@ -13,7 +13,7 @@ _[↪ reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Referen
 
 In JavaScript, `null` is actually considered an `Object`. However, adjustments have been made in this library for such chronic errors to better align with our perspective.
 
-## Importing
+## Import
 
 ```js
 import { isArray, isEmpty } from "renit/is";
@@ -1025,8 +1025,8 @@ Determines the actual type of the given value.
 
 ```js
 isType(Promise.resolve("something"));
-//=> orjinal => object
-//=> dönen => promise
+//=> default => object
+//=> return => promise
 ```
 
 ```js
@@ -1043,20 +1043,20 @@ isType(() => {}); //=> function
 
 ```js
 isType(async () => {});
-//=> orjinal => function
-//=> dönen => async
+//=> default => function
+//=> return => async
 ```
 
 ```js
 isType(new Date());
-//=> orjinal => object
-//=> dönen => date
+//=> default => object
+//=> return => date
 ```
 
 ```js
 isType(new Error());
-//=> orjinal => object
-//=> dönen => error
+//=> default => object
+//=> return => error
 ```
 
 ```js
@@ -1065,8 +1065,8 @@ isType(Symbol("is")); //=> symbol
 
 ```js
 isType(class User {});
-//=> orjinal => function
-//=> dönen => class
+//=> default => function
+//=> return => class
 ```
 
 ```js

@@ -1025,7 +1025,7 @@ Berilen değerin gerçek tipini belirler.
 
 ```js
 isType(Promise.resolve("something"));
-//=> orjinal => object
+//=> standart => object
 //=> dönen => promise
 ```
 
@@ -1043,19 +1043,19 @@ isType(() => {}); //=> function
 
 ```js
 isType(async () => {});
-//=> orjinal => function
+//=> standart => function
 //=> dönen => async
 ```
 
 ```js
 isType(new Date());
-//=> orjinal => object
+//=> standart => object
 //=> dönen => date
 ```
 
 ```js
 isType(new Error());
-//=> orjinal => object
+//=> standart => object
 //=> dönen => error
 ```
 
@@ -1065,7 +1065,7 @@ isType(Symbol("is")); //=> symbol
 
 ```js
 isType(class User {});
-//=> orjinal => function
+//=> standart => function
 //=> dönen => class
 ```
 
