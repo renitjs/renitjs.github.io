@@ -2,7 +2,7 @@
 
 It's a structure that connects functions by passing the output of one function as the arguments to another function.
 
-## Importing
+## Import
 
 ```js
 import { pipe } from "renit/helper";
