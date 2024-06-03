@@ -303,6 +303,106 @@ has(5, [1, 2, 3, 4]); //=> false
 
 ---
 
+### `implode`
+
+Combines all elements in a collection into a single `String`. If the collection is an `Array`, the first argument should be the separator string. If the collection is an `Array` of `Object` types, the first argument represents the key to be selected from each object, and the second argument is the separator string.
+
+#### Example
+
+```js
+implode("-", [1, 2, 3, 4, 5]);
+//=> 1-2-3-4-5
+```
+
+```js
+implode("product", ", ", [
+  {
+    product: "ChromeOS",
+    company: "Google",
+  },
+  {
+    product: "ChatGPT",
+    company: "OpenAI",
+  },
+  {
+    product: "VS Code",
+    company: "Microsoft",
+  },
+]);
+//=> ChromeOS, ChatGPT, VS Code
+```
+
+<div class="tip">
+<p>If you need to select a deep key from an object, you can use dot notation like <code>product.name</code>. For more details on selections, check out the <code>pluck</code> function.</p>
+</div>
+
+---
+
+### `join`
+
+Combines the values of all elements in a collection into a single `String`.
+
+#### Example
+
+```js
+join(", ", ["a", "b", "c"]);
+//=> a, b, c
+```
+
+```js
+join(", ", ", and ", ["a", "b", "c"]);
+//=> a, b, and c
+```
+
+```js
+join(", ", ", and ", ["a"]);
+//=> a
+```
+
+```js
+join(", ", ", and ", []);
+//=> ""
+```
+
+```js
+join(" ", { name: "Marie", last: "Curie" });
+//=> Marie Curie
+```
+
+> The `join` function concatenates elements of an array or values of an object using the specified separators. For arrays, the first separator is used between elements, and the second optional separator is used before the last element. For objects, it concatenates the values using the first separator.
+
+---
+
+### `keyMap`
+
+Returns the key map of a collection.
+
+#### Example
+
+```js
+keyMap([
+  {
+    name: "John",
+    roles: [
+      {
+        name: "Editor",
+      },
+      {
+        name: "Admin",
+      },
+    ],
+  },
+]);
+
+/*
+{"0":{"name":"John","roles":[{"name":"Editor"},{"name":"Admin"}]},"0.name":"John","0.roles.0.name":"Editor","0.roles.0":{"name":"Editor"},"0.roles.1.name":"Admin","0.roles.1":{"name":"Admin"},"0.roles":[{"name":"Editor"},{"name":"Admin"}]}
+*/
+```
+
+The `keyMap` function traverses the collection and creates a map of all keys and their corresponding values, including nested objects. This provides a comprehensive view of the structure and contents of the collection.
+
+---
+
 ### `keys`
 
 Returns an array containing the keys of every property in an object.
@@ -474,6 +574,70 @@ await merge(Promise.resolve(["strawberry"]), Promise.resolve(["blackberry"]));
 
 ---
 
+### `pluck`
+
+Retrieves all values for a specified key.
+
+#### Example
+
+```js
+pluck("name", { name: "Sabuncuoğlu", last: "Şerefeddin" });
+//=> ['Sabuncuoğlu']
+```
+
+```js
+pluck("name", [
+  { id: 78, name: "Nikola" },
+  { id: 79, name: "Tesla" },
+]);
+//=> ['Nikola', 'Tesla']
+```
+
+You can specify how the resulting collection should be keyed.
+
+```js
+pluck("name", "subs.id", [
+  { id: 78, subs: { id: 17 }, name: "Thomas" },
+  { id: 79, subs: { id: 18 }, name: "Edison" },
+]);
+//=> {17: 'Thomas', 18: 'Edison'}
+```
+
+Use dot notation to select nested keys.
+
+```js
+pluck("roles.0.name", {
+  name: "John",
+  roles: [{ name: "Editor" }, { name: "Admin" }],
+});
+//=> ['Editor']
+```
+
+```js
+pluck("roles.0.name", [
+  { id: 1, roles: [{ name: "Editor" }, { name: "Admin" }] },
+  { id: 2, roles: [{ name: "Super User" }, { name: "Writer" }] },
+]);
+//=> ['Editor', 'Super User']
+```
+
+Use the dot notation along with the asterisk (`*`) character to retrieve all values for a specific key within a list of objects.
+
+```js
+pluck("roles.*.name", [
+  { id: 1, roles: [{ name: "Editor" }, { name: "Admin" }] },
+  { id: 2, roles: [{ name: "Super User" }, { name: "Writer" }] },
+]);
+/*
+[
+  ["Editor", "Admin"],
+  ["Super User", "Writer"]
+]
+*/
+```
+
+---
+
 ### `pop`
 
 Returns the last item or the last specified number of items from a collection.
@@ -499,6 +663,36 @@ pop({ name: "Ali", last: "Kuşçu", birth: "1403" });
 pop(2, { name: "Ali", last: "Kuşçu", birth: "1403" });
 //=> { last: 'Kuşçu', birth: '1403' }
 ```
+
+---
+
+### `prepend`
+
+Adds an element to the beginning of a collection.
+
+```js
+prepend(0, [1, 2, 3, 4, 5]);
+//=> [0, 1, 2, 3, 4, 5]
+```
+
+```js
+prepend([0, 14], [1, 2, 3, 4, 5]);
+//=> [0, 14, 1, 2, 3, 4, 5]
+```
+
+```js
+prepend("brand", "Google", {
+  product: "ChromeOS",
+});
+//=> { brand: 'Google', product: 'ChromeOS' }
+```
+
+```js
+prepend("?", "category=1&book=5");
+//=> ?category=1&book=5
+```
+
+> The `prepend` function adds an element or a set of elements to the beginning of a collection, whether it's an array or an object. If the collection is an array, the new element(s) will be inserted at the beginning of the array. If the collection is an object, a new key-value pair will be added to the object, and existing key-value pairs will be shifted to the right.
 
 ---
 
@@ -633,6 +827,32 @@ reverse([1, 2, 3, 4, 5]); //=> [5, 4, 3, 2, 1]
 
 ---
 
+### `shift`
+
+Removes the first element from a collection and returns that element. Additionally, you can specify the number of elements to remove, and it will return the removed elements as a new collection.
+
+```js
+const a = [1, 2, 3, 4, 5];
+const b = shift(a);
+//=> a => [2, 3, 4, 5]
+//=> b => 1
+```
+
+> In this example, the first element of the array `a`, which is `1`, is removed and assigned to the variable `b`. The array `a` is updated to `[2, 3, 4, 5]`.
+
+It is also possible to remove multiple elements from an array by specifying the number of elements to remove. In this case, the removed elements are returned as a new array.
+
+```js
+const a = [1, 2, 3, 4, 5];
+const b = shift(2, a);
+//=> a => [3, 4, 5]
+//=> b => [1, 2]
+```
+
+> In this example, the first two elements `1` and `2` are removed from the array `a` and assigned to the variable `b` as an array. The array `a` is updated to `[3, 4, 5]`.
+
+---
+
 ### `slice`
 
 Extracts a section of an array based on the specified start index and an optional end index.
@@ -746,6 +966,60 @@ split("&", "id=1&book=5");
 split(3, [1, 2, 3, 4, 5]);
 //=> [[1, 2], [3, 4], [5]]
 ```
+
+---
+
+### `take`
+
+Returns a new collection containing a specified number of elements taken from the beginning or the end of the collection. If a positive integer is provided, it takes that many elements from the start of the collection. If a negative integer is provided, it takes that many elements from the end of the collection.
+
+```js
+take(3, [1, 2, 3, 4, 5, 6, 7]);
+//=> [1, 2, 3]
+```
+
+```js
+take(-3, [1, 2, 3, 4, 5, 6, 7]);
+//=> [5, 6, 7]
+```
+
+```js
+take(1, { name: "Isaac", last: "Newton" });
+//=> { name: 'Isaac' }
+```
+
+```js
+take(-1, { name: "Isaac", last: "Newton" });
+//=> { last: 'Newton' }
+```
+
+---
+
+### `takeUntil`
+
+Returns elements from a collection until the provided callback function returns `true`.
+
+```js
+takeUntil(3, [1, 2, 3]);
+//=> [1, 2]
+```
+
+```js
+takeUntil((item) => item >= 3, [1, 2, 3]);
+//=> [1, 2]
+```
+
+```js
+takeUntil((item) => item >= 1000, {
+  books: 194,
+  users: 1458,
+  collections: 500,
+  kits: null,
+});
+//=> { books: 194 }
+```
+
+> If the specified value is not found or the callback function never returns `true`, the `takeUntil` function returns all elements in the collection.
 
 ---
 

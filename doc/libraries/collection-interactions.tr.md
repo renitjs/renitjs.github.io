@@ -303,6 +303,106 @@ has(5, [1, 2, 3, 4]); //=> false
 
 ---
 
+### `implode`
+
+Koleksiyondaki tüm öğeleri tek bir `String` türünde birleştirir. Koleksiyon `Array` ise birinci argümanda birleştirecek ifade gönderilmelidir. Eğer koleksiyon `Array` içinde `Object` türlerinden oluşuyorsa birinci argüman koleksiyondan seçilecek anahtarı, ikinci argüman ise birleştirecek ifadeyi temsil eder.
+
+#### Örnek
+
+```js
+implode("-", [1, 2, 3, 4, 5]);
+//=> 1-2-3-4-5
+```
+
+```js
+implode("product", ", ", [
+  {
+    product: "ChromeOS",
+    company: "Google",
+  },
+  {
+    product: "ChatGPT",
+    company: "OpenAI",
+  },
+  {
+    product: "VS Code",
+    company: "Microsoft",
+  },
+]);
+//=> Chair, Desk, Chair
+```
+
+<div class="tip">
+<p>Objeden derin bir anahtar seçmeniz gerekirse, <code>product.name</code> gibi noktalı ifadeler kullanabilirsiniz. Seçimleri daha detaylı öğrenmek için <code>pluck</code> fonksiyonunu inceleyin.</p>
+</div>
+
+---
+
+### `join`
+
+Koleksiyondaki tüm öğelerin değerlerini tek bir `String` türünde birleştirir.
+
+#### Örnek
+
+```js
+join(", ", ["a", "b", "c"]);
+//=> a, b, c
+```
+
+```js
+join(", ", ", and ", ["a", "b", "c"]);
+//=> a, b, and c
+```
+
+```js
+join(", ", ", and ", ["a"]);
+//=> a
+```
+
+```js
+join(", ", ", and ", []);
+//=> ""
+```
+
+```js
+join(" ", { name: "Marie", last: "Curie" });
+//=> Marie Curie
+```
+
+> `join` fonksiyonu, belirtilen ayırıcıları kullanarak bir dizinin elemanlarını veya bir nesnenin değerlerini birleştirir. Diziler için, ilk ayırıcı elemanlar arasında kullanılır ve ikinci isteğe bağlı ayırıcı son elemandan önce kullanılır. Nesneler için, değerleri birleştirirken ilk ayırıcı kullanılır.
+
+---
+
+### `keyMap`
+
+Koleksiyonun anahtar haritasını döndürür.
+
+#### Örnek
+
+```js
+keyMap([
+  {
+    name: "John",
+    roles: [
+      {
+        name: "Editor",
+      },
+      {
+        name: "Admin",
+      },
+    ],
+  },
+]);
+
+/*
+{"0":{"name":"John","roles":[{"name":"Editor"},{"name":"Admin"}]},"0.name":"John","0.roles.0.name":"Editor","0.roles.0":{"name":"Editor"},"0.roles.1.name":"Admin","0.roles.1":{"name":"Admin"},"0.roles":[{"name":"Editor"},{"name":"Admin"}]}
+*/
+```
+
+> `keyMap` fonksiyonu, koleksiyonu dolaşır ve tüm anahtarların ve bunlara karşılık gelen değerlerin bir haritasını oluşturur, iç içe geçmiş nesneler dahil. Bu, koleksiyonun yapısının ve içeriğinin kapsamlı bir görünümünü sağlar.
+
+---
+
 ### `keys`
 
 Bir nesnenin her özelliği için anahtarlarını içeren bir dizi döndürür.
@@ -474,6 +574,70 @@ await merge(Promise.resolve(["strawberry"]), Promise.resolve(["blackberry"]));
 
 ---
 
+### `pluck`
+
+Belirli bir anahtar için tüm değerleri getirir.
+
+#### Örnek
+
+```js
+pluck("name", { name: "Sabuncuoğlu", last: "Şerefeddin" });
+//=> ['Sabuncuoğlu']
+```
+
+```js
+pluck("name", [
+  { id: 78, name: "Nikola" },
+  { id: 79, name: "Tesla" },
+]);
+//=> ['Nikola', 'Tesla']
+```
+
+Ortaya çıkacak koleksiyonun nasıl anahtarlanmasını istediğinizi belirtebilirsiniz.
+
+```js
+pluck("name", "subs.id", [
+  { id: 78, subs: { id: 17 }, name: "Thomas" },
+  { id: 79, subs: { id: 18 }, name: "Edison" },
+]);
+//=> {17: 'Thomas', 18: 'Edison'}
+```
+
+İç içe geçmiş anahtarları seçmek için noktalı ifadeler kullanabilirsiniz.
+
+```js
+pluck("roles.0.name", {
+  name: "John",
+  roles: [{ name: "Editor" }, { name: "Admin" }],
+});
+//=> ['Editor']
+```
+
+```js
+pluck("roles.0.name", [
+  { id: 1, roles: [{ name: "Editor" }, { name: "Admin" }] },
+  { id: 2, roles: [{ name: "Super User" }, { name: "Writer" }] },
+]);
+//=> ['Editor', 'Super User']
+```
+
+Noktalı ifadelerle birlikte yıldız (`*`) karakteri kullanılarak, bir liste içerisindeki her bir nesnenin belirli bir anahtara sahip tüm değerleri alınabilir.
+
+```js
+pluck("roles.*.name", [
+  { id: 1, roles: [{ name: "Editor" }, { name: "Admin" }] },
+  { id: 2, roles: [{ name: "Super User" }, { name: "Writer" }] },
+]);
+/*
+[
+  ["Editor", "Admin"],
+  ["Super User", "Writer"],
+];
+*/
+```
+
+---
+
 ### `pop`
 
 Koleksiyondaki son öğeyi veya istenen sayıya göre son öğeleri dönderir.
@@ -499,6 +663,36 @@ pop({ name: "Ali", last: "Kuşçu", birth: "1403" });
 pop(2, { name: "Ali", last: "Kuşçu", birth: "1403" });
 //=> { last: 'Kuşçu', birth: '1403' }
 ```
+
+---
+
+### `prepend`
+
+Koleksiyonun başına bir öğe ekler.
+
+```js
+prepend(0, [1, 2, 3, 4, 5]);
+//=> [0, 1, 2, 3, 4, 5]
+```
+
+```js
+prepend([0, 14], [1, 2, 3, 4, 5]);
+//=> [0, 14, 1, 2, 3, 4, 5]
+```
+
+```js
+prepend("brand", "Google", {
+  product: "ChromeOS",
+});
+//=> { brand: 'Google', product: 'ChromeOS' }
+```
+
+```js
+prepend("?", "category=1&book=5");
+//=> ?category=1&book=5
+```
+
+> `prepend` fonksiyonu, bir koleksiyonun başına bir eleman veya bir grup eleman ekler; bu koleksiyon bir dizi veya bir nesne olabilir. Eğer koleksiyon bir dizi ise, yeni eleman(lar) diziye başlangıçta eklenir. Eğer koleksiyon bir nesne ise, yeni bir anahtar-değer çifti nesneye eklenir ve mevcut anahtar-değer çiftleri sağa kaydırılır.
 
 ---
 
@@ -633,6 +827,32 @@ reverse([1, 2, 3, 4, 5]); //=> [5, 4, 3, 2, 1]
 
 ---
 
+### `shift`
+
+Bir koleksiyondaki ilk öğeyi kaldırır ve bu öğeyi döndürür. Ek olarak, kaldırılacak öğe sayısını belirterek birden fazla öğe de kaldırılabilir. Kaldırılan öğeler, yeni bir koleksiyon olarak döndürülür.
+
+```js
+const a = [1, 2, 3, 4, 5];
+const b = shift(a);
+//=> a => [2, 3, 4, 5]
+//=> b => 1
+```
+
+> Bu örnekte, `a` dizisinin ilk öğesi olan `1` kaldırılır ve `b` değişkenine atanır. `a` dizisi ise `[2, 3, 4, 5]` olarak güncellenir.
+
+Kaldırılacak öğe sayısını belirterek, bir diziden birden fazla öğe kaldırmak mümkündür. Bu durumda, kaldırılan öğeler yeni bir dizi olarak döndürülür.
+
+```js
+const a = [1, 2, 3, 4, 5];
+const b = shift(2, a);
+//=> a => [3, 4, 5]
+//=> b => [1, 2]
+```
+
+> Bu örnekte, `a` dizisinden ilk iki öğe olan `1` ve `2` kaldırılır ve `b` değişkenine bir dizi olarak atanır. `a` dizisi ise `[3, 4, 5]` olarak güncellenir.
+
+---
+
 ### `slice`
 
 Belirtilen başlangıç indisine ve isteğe bağlı bitiş indisine dayanarak bir dizinin bir bölümünü çıkarır.
@@ -746,6 +966,60 @@ split("&", "id=1&book=5");
 split(3, [1, 2, 3, 4, 5]);
 //=> [[1, 2], [3, 4], [5]]
 ```
+
+---
+
+### `take`
+
+Koleksiyonun başından veya sonundan belirli sayıda öğeyi alarak yeni bir koleksiyon döndürür. Pozitif bir tamsayı verilirse, koleksiyonun başından belirtilen sayıda öğe alınır. Negatif bir tamsayı verilirse, koleksiyonun sonundan belirtilen miktarda öğe alınır.
+
+```js
+take(3, [1, 2, 3, 4, 5, 6, 7]);
+//=> [1, 2, 3]
+```
+
+```js
+take(-3, [1, 2, 3, 4, 5, 6, 7]);
+//=> [5, 6, 7]
+```
+
+```js
+take(1, { name: "Isaac", last: "Newton" });
+//=> { name: 'Newton' }
+```
+
+```js
+take(-1, { name: "Isaac", last: "Newton" });
+//=> { last: 'Newton' }
+```
+
+---
+
+### `takeUntil`
+
+Verilen geri arama fonksiyonu `true` değeri döndürene kadar koleksiyondaki öğeleri döndürür.
+
+```js
+takeUntil(3, [1, 2, 3]);
+//=> [1, 2]
+```
+
+```js
+takeUntil((item) => item >= 3, [1, 2, 3]);
+//=> [1, 2]
+```
+
+```js
+takeUntil((item) => item >= 1000, {
+  books: 194,
+  users: 1458,
+  collections: 500,
+  kits: null,
+});
+//=> {books: 194}
+```
+
+> Verilen değer bulunamazsa veya geri arama fonksiyonu hiçbir zaman `true` değeri döndürmezse, `takeUntil` fonksiyonu koleksiyondaki tüm öğeleri döndürür.
 
 ---
 
