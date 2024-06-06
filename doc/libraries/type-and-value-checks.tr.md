@@ -227,6 +227,24 @@ isDate(new Date().getTime()); //=> false
 
 ---
 
+### `isDivisible`
+
+Bir değerin belirli bir sayıya bölünüp bölünemediğini kontrol eder.
+
+#### Örnek
+
+```js
+isDivisible(10, 2);
+//=> true
+```
+
+```js
+isDivisible(10, 3);
+//=> false
+```
+
+---
+
 ### `isElement`
 
 Belirtilen değerin bir Element nesnesi olup olmadığını kontrol eder.

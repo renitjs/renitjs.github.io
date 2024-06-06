@@ -227,6 +227,24 @@ isDate(new Date().getTime()); //=> false
 
 ---
 
+### `isDivisible`
+
+Checks if a value is divisible by a given number.
+
+#### Örnek
+
+```js
+isDivisible(10, 2);
+//=> true
+```
+
+```js
+isDivisible(10, 3);
+//=> false
+```
+
+---
+
 ### `isElement`
 
 Checks if a value is an Element object.
