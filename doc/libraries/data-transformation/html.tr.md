@@ -22,11 +22,16 @@ htmlToAst("<h1>Hello World!</h1>");
 
 ```json
 {
-  "type": "element",
-  "name": "h1",
-  "voidElement": false,
-  "attributes": [],
-  "children": [{ "type": "text", "content": "Hello World!" }]
+  "type": "Document",
+  "children": [
+    {
+      "type": "Element",
+      "name": "h1",
+      "voidElement": false,
+      "attributes": [],
+      "children": [{ "type": "Text", "content": "Hello World!" }]
+    }
+  ]
 }
 ```
 
@@ -37,15 +42,18 @@ htmlToAst("<h1>Hello World!</h1>");
 Oluşturulan AST'yi alır ve yeniden HTML stringine dönüştürür.
 
 ```js
-astToHtml([
-  {
-    type: "element",
-    name: "h1",
-    voidElement: false,
-    attributes: [],
-    children: [{ type: "text", content: "Hello World!" }],
-  },
-]);
+astToHtml({
+  type: "Document",
+  children: [
+    {
+      type: "Element",
+      name: "h1",
+      voidElement: false,
+      attributes: [],
+      children: [{ type: "Text", content: "Hello World!" }],
+    },
+  ],
+});
 //=> <h1>Hello World!</h1>
 ```
 
@@ -59,19 +67,24 @@ HTML Ayrıştırıcı iç içe geçmiş öğeleri `children` dizisi altında ayr
 htmlToAst("<div><h1>Hello World!</h1></div>");
 ```
 
-```json{6,12}
+```json{3,9,15}
 {
-  "type": "element",
-  "name": "div",
-  "voidElement": false,
-  "attributes": [],
+  "type": "Document",
   "children": [
     {
-      "type": "element",
-      "name": "h1",
+      "type": "Element",
+      "name": "div",
       "voidElement": false,
       "attributes": [],
-      "children": [{ "type": "text", "content": "Hello World!" }]
+      "children": [
+        {
+          "type": "Element",
+          "name": "h1",
+          "voidElement": false,
+          "attributes": [],
+          "children": [{ "type": "Text", "content": "Hello World!" }]
+        }
+      ]
     }
   ]
 }
@@ -89,31 +102,31 @@ htmlToAst(
 
 ```json{7,8,9,12,13,14,17,18,19,22,23}
 {
-  "type": "element",
+  "type": "Element",
   "name": "div",
   "voidElement": false,
   "attributes": [
     {
-      "type": "attribute",
+      "type": "Attribute",
       "name": "class",
       "value": "mt-4"
     },
     {
-      "type": "attribute",
+      "type": "Attribute",
       "name": "display",
       "value": "variable"
     },
     {
-      "type": "attribute",
+      "type": "Attribute",
       "name": "data-id",
       "value": "5"
     },
     {
-      "type": "attribute",
+      "type": "Attribute",
       "name": "disabled",
     }
   ],
-  "children": [{ "type": "text", "content": "Hello World!" }]
+  "children": [{ "type": "Text", "content": "Hello World!" }]
 }
 ```
 
@@ -138,13 +151,13 @@ htmlToAst(`<div @name="header" class:visible={display}>...</div>`, {
 ```json
 [
   {
-    "type": "attribute",
+    "type": "Attribute",
     "prefix": "@",
     "name": "name",
     "value": "header"
   },
   {
-    "type": "attribute",
+    "type": "Attribute",
     "name": "class",
     "suffix": [{ "prefix": ":", "name": "visible" }],
     "value": "{display}"
@@ -163,7 +176,7 @@ htmlToAst("<div !variable=1>OK</div>", {
 ```json
 {
   "attributes": [
-    { "type": "attribute", "prefix": "!", "name": "variable", "value": "1" }
+    { "type": "Attribute", "prefix": "!", "name": "variable", "value": "1" }
   ]
 }
 ```
@@ -178,12 +191,12 @@ htmlToAst(`<img src="renit.png" />`);
 
 ```json{4}
 {
-  "type": "element",
+  "type": "Element",
   "name": "img",
   "voidElement": true,
   "attributes": [
     {
-      "type": "attribute",
+      "type": "Attribute",
       "name": "src",
       "value": "renit.png"
     }
@@ -206,20 +219,20 @@ htmlToAst(`
 
 ```json{7,15}
 {
-  "type": "element",
+  "type": "Element",
   "name": "div",
   "voidElement": false,
   "attributes": [],
   "children": [
-    { "type": "text", "content": "\n        " },
+    { "type": "Text", "content": "\n        " },
     {
-      "type": "element",
+      "type": "Element",
       "name": "p",
       "voidElement": false,
       "attributes": [],
-      "children": [{ "type": "text", "content": " text " }]
+      "children": [{ "type": "Text", "content": " text " }]
     },
-    { "type": "text", "content": " " }
+    { "type": "Text", "content": "\n" }
   ]
 }
 ```
@@ -237,7 +250,7 @@ htmlToAst(`...`, { transform: { whitespace: false, trim: true } });
 ```
 
 ```json
-{ "type": "text", "content": "text" }
+{ "type": "Text", "content": "text" }
 ```
 
 ### Özel elementler
@@ -254,13 +267,13 @@ htmlToAst(`
 
 ```json
 {
-  "type": "element",
+  "type": "Element",
   "name": "script",
   "voidElement": false,
-  "attributes": [{ "type": "attribute", "name": "lang", "value": "ts" }],
+  "attributes": [{ "type": "Attribute", "name": "lang", "value": "ts" }],
   "children": [
     {
-      "type": "text",
+      "type": "Text",
       "content": "console.log(\"<p>not parse</p>\")"
     }
   ]
@@ -278,11 +291,93 @@ htmlToAst(`
 ```
 
 ```json
-{ "type": "comment", "content": "single line comment <p>not parse</p>" }
+{ "type": "Comment", "content": "single line comment <p>not parse</p>" }
 ```
 
 Ayrıştırılmasını istemediğiniz özel bir öğe ayarlamak isterseniz, `addSpecial` yapılandırmasını kullanabilirsiniz.
 
 ```js
 htmlToAst(`...`, { tags: { addSpecial: ["portal"] } });
+```
+
+### Dizin ve konumlar
+
+`index` veya `loc` seçeneklerini etkinleştirirseniz, ayrıştırılan öğelerin pozisyon bilgileri de AST'ye eklenir. Bu, öğelerin başlangıç ve bitiş konumlarını belirlemeye yarar ve özellikle hata ayıklama ve metin işlemleri sırasında faydalıdır.
+
+#### Örnekler
+
+#### 1. **Dizin Bilgileriyle Ayrıştırma**
+
+`index` seçeneği etkinleştirildiğinde, her bir öğenin başlangıç ve bitiş dizinleri AST'ye eklenir. Bu, öğelerin metin içindeki kesin konumlarını belirtir.
+
+```js
+htmlToAst("<h1>Hello World!</h1>", { position: { index: true } });
+```
+
+```json
+{
+  "type": "Element",
+  "name": "h1",
+  "voidElement": false,
+  "attributes": [],
+  "children": [
+    {
+      "type": "Text",
+      "content": "Hello World!",
+      "start": 4,
+      "end": 16
+    }
+  ],
+  "start": 0,
+  "end": 21
+}
+```
+
+#### 2. **Konum Bilgileriyle Ayrıştırma**
+
+`loc` seçeneği etkinleştirildiğinde, her bir öğenin başlangıç ve bitiş satır ve sütun bilgileri AST'ye eklenir. Bu, öğelerin dosya içindeki konumlarını belirler.
+
+```js
+htmlToAst(
+  `
+<h1>Hello
+World!</h1>
+`,
+  { position: { loc: true } }
+);
+```
+
+```json
+{
+  "type": "Element",
+  "name": "h1",
+  "voidElement": false,
+  "attributes": [],
+  "children": [
+    {
+      "type": "Text",
+      "content": "Hello World!",
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 4
+        },
+        "end": {
+          "line": 2,
+          "column": 6
+        }
+      }
+    }
+  ],
+  "loc": {
+    "start": {
+      "line": 1,
+      "column": 0
+    },
+    "end": {
+      "line": 2,
+      "column": 11
+    }
+  }
+}
 ```
