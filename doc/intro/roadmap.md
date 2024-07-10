@@ -10,7 +10,7 @@ We have a few ideas about how Renit might develop. While there's no guarantee of
     <h2>Attribute Modifiers</h2>
     <p class="mb-1">We need a modifier mechanism that can add and remove attributes.</p>
 
-```html
+```nit
 <script>
   let check = true;
   function click() {
@@ -39,7 +39,7 @@ We have a few ideas about how Renit might develop. While there's no guarantee of
     <h2>If Blocks</h2>
     <p class="mb-1">Blocks that allow us to perform if, elseif, and else queries.</p>
 
-```html
+```nit
 <script>
   let check = true;
 </script>

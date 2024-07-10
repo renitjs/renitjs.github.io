@@ -10,7 +10,7 @@ Renit'in nasıl bir gelişim göstereceği konusunda birkaç fikrimiz var. Yapı
     <h2>Öznitelik Değiştiricileri</h2>
     <p class="mb-1">Öznitelikleri ekleyip kaldırabilecek bir değiştirici mekanizmasına ihtiyacımız var.</p>
 
-```html
+```nit
 <script>
   let check = true;
   function click() {
@@ -39,7 +39,7 @@ Renit'in nasıl bir gelişim göstereceği konusunda birkaç fikrimiz var. Yapı
     <h2>If Blokları</h2>
     <p class="mb-1">If, elseif ve else sorguları yapmamızı sağlayacak bloklar.</p>
 
-```html
+```nit
 <script>
   let check = true;
 </script>
